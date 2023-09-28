@@ -5,8 +5,6 @@ import urllib.parse
 
 st.title("Welcome to Streamlit - OCR")
 
-import streamlit as st
-
 option = st.selectbox(
    "Which Package would you like to use?",
    ("Nougat","PyPDF"),
@@ -16,7 +14,7 @@ option = st.selectbox(
 
 st.write('You selected:', option)
 
-url = st.text_input('The URL link')
+url = st.text_input('The PDF URL Link')
 
 if url:
     # Parse the URL to extract the host and optional port

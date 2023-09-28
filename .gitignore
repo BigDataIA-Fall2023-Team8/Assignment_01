@@ -161,3 +161,6 @@ cython_debug/
 
 #Part A Virtual Environment
 PartA/.ocrenv
+
+#Part B Virtual Environment
+PartB/.gxenv

@@ -160,7 +160,10 @@ cython_debug/
 #.idea/
 
 #Part A Virtual Environment
-/PartA/.ocrenv
+#PartA/.ocrenv
 
 #Part B Virtual Environment
 PartB/.gxenv
+
+.env_*/
+.*env/

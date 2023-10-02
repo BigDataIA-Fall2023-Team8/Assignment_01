@@ -3,7 +3,6 @@ import requests
 import http.client
 import urllib.parse
 import io
-import n
 import PyPDF2
 from PyPDF2 import PdfReader
 
@@ -22,10 +21,10 @@ url = st.text_input('The PDF URL Link')
 
 output_placeholder = st.empty()
 
-def perform_pypdf_ocr(pdf_content):
+def perform_pypdf_ocr(pdf_file):
     pdf_text = ""
     # PyPDF2-based OCR
-    pdf_reader = PdfReader(io.BytesIO(pdf_content))
+    pdf_reader = PdfReader(io.BytesIO(pdf_file))
     for page_num in range(len(pdf_reader.pages)):
         page = pdf_reader.pages[page_num]
         pdf_text = pdf_text + page.extract_text()
@@ -67,7 +66,7 @@ if st.button("Perform OCR"):
                     # Perform OCR using Nougat
                     # Display a loading message while OCR is in progress
                     output_placeholder.write("Performing OCR (Nougat)... Please wait.")
-                    perform_nougat_ocr(io.BytesIO(pdf_content))
+                    perform_nougat_ocr(io.BytesIO(pdf_content))                  
 
                 else:
                     st.error("Please select a package first!")

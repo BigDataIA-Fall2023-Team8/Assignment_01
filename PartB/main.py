@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 from pandas_profiling import ProfileReport
+import warnings
 
 st.title("Data Summarizer Pandas Profiling and GX")
 st.sidebar.title("Settings")
 
-uploaded_file = st.sidebar.file_uploader("Upload a CSV or XLSX file", type=["csv", "xlsx"])
+uploaded_file = st.sidebar.file_uploader("Upload a CSV or XLSX file", type=["csv", "xls"])
 
 data_type = st.sidebar.radio("Select Data Type:", ("Origination Data", "Monthly Performance Data"))
 

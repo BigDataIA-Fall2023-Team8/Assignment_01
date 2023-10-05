@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from pandas_profiling import ProfileReport
+import great_expectations as ge
 import warnings
 
 st.title("Data Summarizer Pandas Profiling and GX")
@@ -10,6 +11,16 @@ uploaded_file = st.sidebar.file_uploader("Upload a CSV or XLSX file", type=["csv
 
 data_type = st.sidebar.radio("Select Data Type:", ("Origination Data", "Monthly Performance Data"))
 
+def run_expectations_Origination(ge_df):
+    
+    #add expectations here
+    #ge_df.expect_column_values_to_be_unique("column_name1")
+    return ge_df.validate()
+
+def run_expectations_Monthly(ge_df):
+    
+    #ge_df.expect_column_values_to_be_unique("column_name2")
+    return ge_df.validate()
 
 def check_data_type(df):
     # Check if it's Origination Data
@@ -54,15 +65,28 @@ def check_data_type(df):
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
+    #ge_df = ge.from_pandas(df)
+
     data_type = check_data_type(df)
 
     if data_type is not None:
         st.subheader(f"This appears to be {data_type}.")
-        st.write(df)
+        if data_type == "Origination Data":
+            ge_df = ge.from_pandas(df)
+            results = run_expectations_Origination(ge_df)
+        else:
+            ge_df = ge.from_pandas(df)
+            results = run_expectations_Monthly(ge_df)
+        #st.write(df) testing
+
+        st.subheader("Great Expectations Results")
+        st.write(results)
+
     else:
         st.warning("The uploaded file does not match either Origination or Monthly Performance Data patterns. Please select the correct file.")
 
-    profile = ProfileReport(df, explorative=True)
+    #profile = ProfileReport(df, explorative=True) #testing
+    profile = ProfileReport(results, explorative=True)
     if st.button("Generate Report"):
         
         report = profile.to_file("report.html")

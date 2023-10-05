@@ -33,7 +33,8 @@ def perform_pypdf_ocr(pdf_file):
 def perform_nougat_ocr(pdf_file):
     try:
         # Perform OCR using Nougat API
-        url = "http://127.0.0.1:8503/predict/"
+        #url = "http://127.0.0.1:8503/predict/"
+        url = "https://0728-34-125-184-65.ngrok-free.app/predict"
         files = {'file': pdf_file}
         response = requests.post(url, files=files)
 

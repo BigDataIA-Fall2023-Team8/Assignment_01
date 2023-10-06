@@ -1,0 +1,7 @@
+openpyxl
+pandas-profiling
+streamlit
+ipython
+matplotlib==3.7.0
+great-expectations
+diagrams

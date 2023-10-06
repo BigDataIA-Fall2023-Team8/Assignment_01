@@ -1,0 +1,4 @@
+streamlit
+nougat
+PyPDF2
+diagrams

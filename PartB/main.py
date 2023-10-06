@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
-import ydata_profiling
-from pandas_profiling import ProfileReport
+
+from ydata_profiling import ProfileReport
 import great_expectations as ge
 from great_expectations.data_context import DataContext
 import os
-
+import ydata_profiling
 from pandas_profiling import ProfileReport
 # from great_expectations.datasource import DatasourceConfig
 # from great_expectations.execution_engine import PandasExecutionEngineConfig

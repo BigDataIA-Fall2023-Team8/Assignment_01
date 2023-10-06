@@ -27,3 +27,36 @@ Note: The streamlit application has also been deployed on streamlit community an
 
 
 ## Part 2 - Pandas Profiling and Great Expectations on StreamLit
+
+Intallation/Guide on how to run Part B:
+
+- Once the github repo has been cloned, we need to go to the following file Assignment_01 > PartB > main.py
+- Open the integrated terminal for the same
+- Create the required virtual environment by writing > python -m venv .gxenv
+- Activate the Virtual Environment > source .gxenv/bin/activate
+- Then import the required modules from requirements.txt > pip install -r requirements.txt
+- Run great expectations command on terminal > great_expectations init
+- On the terminal run the streamlit app with the following code: > streamlit run main.py
+
+## Structure of Github
+
+'''
+.
+├── LICENSE
+├── PartA
+│   ├── Nougat_API_Hosting.ipynb
+│   ├── diagram.py
+│   ├── main.py
+│   └── requirements.txt
+├── PartB
+│   ├── PartB_a.ipynb
+│   ├── PartB_a.ipynbZone.Identifier
+│   ├── __pycache__
+│   ├── diagrams.py
+│   ├── gx
+│   ├── main.py
+│   └── requirements.txt
+├── README.md
+├── Tech Doc Assignment 1.pdf
+└── architecture_diagram.png
+'''

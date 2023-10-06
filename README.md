@@ -38,7 +38,7 @@ Intallation/Guide on how to run Part B:
 - Run great expectations command on terminal > great_expectations init
 - On the terminal run the streamlit app with the following code: > streamlit run main.py
 
-Link to Codelabs File - [https://codelabs-preview.appspot.com/?file_id=1IOtgAn5DYxGa9WVIyqiJ8KyA_FHH0HGAUe_u6FTMMZU#0](url)
+Link to Codelabs File - https://codelabs-preview.appspot.com/?file_id=1IOtgAn5DYxGa9WVIyqiJ8KyA_FHH0HGAUe_u6FTMMZU#0
 ## Structure of Github
 
 ```

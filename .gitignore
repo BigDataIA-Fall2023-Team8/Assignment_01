@@ -167,3 +167,5 @@ PartB/.gxenv
 
 .env_*/
 .*env/
+
+.DS_Store

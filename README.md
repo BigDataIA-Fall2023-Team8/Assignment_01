@@ -40,7 +40,7 @@ Intallation/Guide on how to run Part B:
 
 ## Structure of Github
 
-'''
+```
 .
 ├── LICENSE
 ├── PartA
@@ -59,4 +59,4 @@ Intallation/Guide on how to run Part B:
 ├── README.md
 ├── Tech Doc Assignment 1.pdf
 └── architecture_diagram.png
-'''
+```

@@ -4,7 +4,7 @@
 Intallation/Guide on how to run Part A:
 
 Step 1:
-- Once the github repo has been cloned, we need to go to the following file Assignment_01 > PartA > main.py
+- Once the github repo has been cloned, we need to go to the following file Assignment_01 > PartA > main.py using any IDE (preferably VSCODE)
 - Open the integrated terminal for the same
 - Create the required virtual environment by writing > python -m venv .ocrenv
 - Activate the Virtual Environment > source .ocrenv/bin/activate
@@ -12,7 +12,7 @@ Step 1:
 - This will set up the initial requirements
 
 Step 2:
-- Open the Nougat_API_Hosting.ipynb file and reset the runtime at first
+- Open the Nougat_API_Hosting.ipynb file on Google Colab and reset the runtime at first
 - Connect to T4 GPU4 and visit the site https://dashboard.ngrok.com/auth to generate an auth code
 - Save the auth code somewhere and add it in the file at the bottom where it is mentioned
 - Further run the entire document step by step and in the end we get an ngrok link where the local host 8503 has been hosted somewhere else

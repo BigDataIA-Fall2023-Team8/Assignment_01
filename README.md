@@ -1,6 +1,29 @@
 # Assignment_01
 ## Part 1 - Nougat/PyPDF OCR Application on StreamLit
 
+Intallation/Guide on how to run Part A:
+
+Step 1:
+- Once the github repo has been cloned, we need to go to the following file Assignment_01 > PartA > main.py
+- Open the integrated terminal for the same
+- Create the required virtual environment by writing > python -m venv .ocrenv
+- Activate the Virtual Environment > source .ocrenv/bin/activate
+- Then import the required modules from requirements.txt > pip install -r requirements.txt
+- This will set up the initial requirements
+
+Step 2:
+- Open the Nougat_API_Hosting.ipynb file and reset the runtime at first
+- Connect to T4 GPU4 and visit the site https://dashboard.ngrok.com/auth to generate an auth code
+- Save the auth code somewhere and add it in the file at the bottom where it is mentioned
+- Further run the entire document step by step and in the end we get an ngrok link where the local host 8503 has been hosted somewhere else
+- Visit the site and check if the Nougat API is working properly with the status code: 200 If it’s not working, try deleting and creating a new runtime as well as reset the auth token for ngrok and redo step 2
+
+Step 3:
+- Once Step 1 and Step 2 are done, come back to the main.py file
+- On the terminal run the streamlit app with the following code: > streamlit run main.py
+- This will redirect the user to a streamlit app page
+
+Note: The streamlit application has also been deployed on streamlit community and can be accessed using - https://bigdataia-fall2023-team8-assignment-01-partamain-soham-sovmhy.streamlit.app/
 
 
 ## Part 2 - Pandas Profiling and Great Expectations on StreamLit

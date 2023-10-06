@@ -2,25 +2,149 @@ import streamlit as st
 import pandas as pd
 from pandas_profiling import ProfileReport
 import great_expectations as ge
-import warnings
+from great_expectations.data_context import DataContext
+
+from pandas_profiling import ProfileReport
+# from great_expectations.datasource import DatasourceConfig
+# from great_expectations.execution_engine import PandasExecutionEngineConfig
+# from great_expectations.data_connector import FilesystemDataConnectorConfig, InferredAssetFilesystemDataConnector
+
+
+yaml = ge.core.yaml_handler.YAMLHandler()
+# Assuming context is already set up
+# context = DataContext("/path/to/your/great_expectations/directory/")
 
 st.title("Data Summarizer Pandas Profiling and GX")
 st.sidebar.title("Settings")
 
-uploaded_file = st.sidebar.file_uploader("Upload a CSV or XLSX file", type=["csv", "xlsx"])
+# Upload the file
+uploaded_file = st.file_uploader("Choose a file", type=["csv", "xlsx"])
+
+import os
+def get_file_type_from_filename(filename):
+    file_extension = os.path.splitext(filename)[1].lower()
+    if file_extension == '.csv':
+        return 'CSV'
+    elif file_extension in ['.xls', '.xlsx']:
+        return 'Excel'
+    else:
+        return 'Unknown'
+st.title("File Type Checker")
+
+if uploaded_file is not None:
+    file_type = get_file_type_from_filename(uploaded_file.name)
+    st.write(f"Uploaded file type: {file_type}")
+
 
 data_type = st.sidebar.radio("Select Data Type:", ("Origination Data", "Monthly Performance Data"))
 
-def run_expectations_Origination(ge_df):
-    
-    #add expectations here
-    #ge_df.expect_column_values_to_be_unique("column_name1")
-    return ge_df.validate()
+# # Defining DataSource config
+datasource_config = {
+    "name": "pandas_datasource",
+    "class_name": "Datasource",
+    "execution_engine": {
+        "class_name": "PandasExecutionEngine"
+    },
+    "data_connectors":{
+        "default_inferred_data_connector_name":  {
+            "class_name": "InferredAssetFilesystemDataConnector",
+            "base_directory": "/home/tanmayz/Assignment_01/PartB",
+            "default_regex": {
+                "group_names": ["data_asset_name"],
+                "pattern": "(.*)\\.csv|(.*)\\.xlsx",
+            },
+        },
+},
+}
+# data_connectors={
+#         "default_inferred_data_connector_name":  {
+#             "class_name": "InferredAssetFilesystemDataConnector",
+#             "base_directory": "/home/tanmayz/Assignment_01/PartB",
+#             "default_regex": {
+#                 "group_names": ["data_asset_name"],
+#                 "pattern": "(.*)\\.csv|(.*)\\.xlsx",
+#             },
+#         },
+# }
 
-def run_expectations_Monthly(ge_df):
-    
-    #ge_df.expect_column_values_to_be_unique("column_name2")
-    return ge_df.validate()
+##
+# datasource_config = DatasourceConfig(
+#     class_name="Datasource",
+#     execution_engine=PandasExecutionEngineConfig(class_name="PandasExecutionEngine"),
+#     data_connectors={
+#         "default_inferred_data_connector_name": FilesystemDataConnectorConfig(
+#             class_name="InferredAssetFilesystemDataConnector",
+#             base_directory="/home/tanmayz/Assignment_01/PartB",
+#             default_regex={
+#                 "pattern": "(.*)\\.csv", # Matches any .csv file
+#                 "group_names": ["data_asset_name"],
+#             },
+#         ),
+#     },
+# )
+
+
+
+
+if st.sidebar.button("Run Expectation"):
+    context = DataContext("./gx/")  
+    datasource = context.test_yaml_config(yaml.dump(datasource_config))
+    datasource = context.add_datasource(**datasource_config)  # datasource config 
+    # datasource = context.add_datasource("pandas_datasource",data_connectors)
+
+    batch_request = ge.core.batch.BatchRequest(
+    datasource_name = "pandas_datasource",
+    data_connector_name =  "default_inferred_data_connector_name",
+    data_asset_name = "data"  # e.g., if your file is "sample.csv", use "sample"
+    )
+
+
+    validator1 = context.get_validator(
+        expectation_suite_name="Origination_Data",
+        batch_request=batch_request
+    )
+
+
+    validator1.expect_column_values_to_match_regex(
+            column="Credit_Score",
+            regex=r'^(9999|[3-8]\d{2})$',  # This regex matches either 9999 or values in the range [300, 850]
+            result_format="COMPLETE"
+            )
+
+
+# if st.sidebar.button("Run Expectations"):
+#     if uploaded_file == "Origination Data":
+#         datasource_name = "uploaded_file"
+#         context = DataContext("./gx/")
+#         data_asset = context.get_datasource(datasource_name)
+
+        # validator1 = context.get_validator(expectation_suite_name = datasource_name)
+
+        # validator1.expect_column_values_to_match_regex(
+        #     column="Credit_Score",
+        #     regex=r'^(9999|[3-8]\d{2})$',  # This regex matches either 9999 or values in the range [300, 850]
+        #     result_format="COMPLETE"
+#         )
+#     elif uploaded_file == "Monthly Performance Data":
+#         datasource_name = "uploaded_file"
+#         context = DataContext("./gx/")
+#         data_asset = context.get_datasource(datasource_name)
+
+#         validator2 = context.get_validator(expectation_suite_name = datasource_name)
+
+#         validator2.expect_column_values_to_match_regex(
+#             validator2.expect_column_values_to_match_regex(
+#             column =  "Loan_Sequence_Number",
+#             regex = r'^[FA]\d{2}[Q][1-4]\d{7}$',
+#             result_format = "BASIC"
+#             ))
+#     else:
+#         print("Error")
+
+context = DataContext("./gx/")
+
+
+
 
 def check_data_type(df):
     # Check if it's Origination Data
@@ -62,39 +186,128 @@ def check_data_type(df):
 
     return None
 
-if uploaded_file is not None:
+if uploaded_file:
     df = pd.read_csv(uploaded_file)
-
-    #ge_df = ge.from_pandas(df)
+    ge_df = ge.from_pandas(df)
 
     data_type = check_data_type(df)
 
     if data_type is not None:
-        st.subheader(f"This appears to be {data_type}.")
-        if data_type == "Origination Data":
-            ge_df = ge.from_pandas(df)
-            results = run_expectations_Origination(ge_df)
-        else:
-            ge_df = ge.from_pandas(df)
-            results = run_expectations_Monthly(ge_df)
-        #st.write(df) testing
+         st.subheader(f"This appears to be {data_type}.")
+         if data_type == "Origination Data":
+            #  checkpoint_name = "my_checkpoint_type2"
+            #  results = context.run_checkpoint(checkpoint_name=checkpoint_name, batches=[{"batch_kwargs": {"dataset": ge_df}}])
 
-        st.subheader("Great Expectations Results")
-        st.write(results)
+             profile = ProfileReport(df, explorative=True)
+             if st.button("Generate Report: Pandas Profile"):
+                report = profile.to_file("report.html")
+                st.success("Report generated successfully!")
 
+            
+             if "report.html" in locals():
+                 st.download_button("Download Report", "report.html")
+
+         else:
+            #  checkpoint_name = "my_checkpoint_type2"
+            #  results = context.run_checkpoint(checkpoint_name=checkpoint_name, batches=[{"batch_kwargs": {"dataset": ge_df}}])
+
+             profile = ProfileReport(df, explorative=True)
+             if st.button("Generate Report: Pandas Profile"):
+                    report = profile.to_file("report.html")
+                    st.success("Report generated successfully!")
+                    
+             if "report.html" in locals():
+                 st.download_button("Download Report", "report.html")
+             #ge_df = ge.from_pandas(df)
+             #results = run_expectations_Monthly(ge_df)
+         #st.write(df) testing
+
+#         st.subheader("Great Expectations Results")
+#         st.write(results)
     else:
-        st.warning("The uploaded file does not match either Origination or Monthly Performance Data patterns. Please select the correct file.")
-
-    #profile = ProfileReport(df, explorative=True) #testing
-    profile = ProfileReport(results, explorative=True)
-    if st.button("Generate Report"):
-        
-        report = profile.to_file("report.html")
-        st.success("Report generated successfully!")
+         st.warning("The uploaded file does not match either Origination or Monthly Performance Data patterns. Please select the correct file.")
 
     
-    if "report.html" in locals():
-        st.download_button("Download Report", "report.html")
+    #st.subheader("Great Expectations Results")
+    #st.write(report)
+    
+    
+
+# def run_expectations_Origination(ge_df):
+    
+#     #add expectations here
+#     #ge_df.expect_column_values_to_be_unique("column_name1")
+#     return ge_df.validate()
+
+# def run_expectations_Monthly(ge_df):
+    
+#     #ge_df.expect_column_values_to_be_unique("column_name2")
+#     return ge_df.validate()
+
+# def check_data_type(df):
+#     # Check if it's Origination Data
+      
+#     if all(col in df.columns for col in origination_columns):
+#         return "Origination Data"
+
+
+#     performance_columns = ['Loan_Sequence_Number', 'Monthly_Reporting_Period',
+#        'Current_Actual_UPB', 'Current_Loan_Delinquency_Status', 'Loan_Age',
+#        'Remaining_Months_to_Legal_Maturity', 'Defect_Settlement_Date',
+#        'Modification_Flag', 'Zero_Balance_Code', 'Zero_Balance_Effective_Date',
+#        'Current_Interest_Rate', 'Current_Deferred_UPB',
+#        'Due_Date_of_Last_Paid_Installment_(DDLPI)', 'MI_Recoveries',
+#        'Net_Sales_Proceeds', 'Non_MI_Recoveries', 'Expenses', 'Legal_Costs',
+#        'Maintenance_and_Preservation_Costs', 'Taxes_and_Insurance',
+#        'Miscellaneous_Expenses', 'Actual_Loss_Calculation',
+#        'Modification_Cost', 'Step_Modification_Flag', 'Deferred_Payment_Plan',
+#        'Estimated_Loan-to-Value_(ELTV)', 'Zero_Balance_Removal_UPB',
+#        'Delinquent_Accrued_Interest', 'Delinquency_Due_to_Disaster',
+#        'Borrower_Assistance_Status_Code', 'Current_Month_Modification_Cost',
+#        'Interest_Bearing_UPB']  
+#     if all(col in df.columns for col in performance_columns):
+#         return "Monthly Performance Data"
+
+#     return None
+
+# if uploaded_file is not None:
+#     df = pd.read_csv(uploaded_file)
+
+#     #ge_df = ge.from_pandas(df)
+
+
+#     data_type = check_data_type(df)
+
+#     if data_type is not None:
+#         st.subheader(f"This appears to be {data_type}.")
+#         if data_type == "Origination Data":
+#             #ge_df = ge.from_pandas(df)
+#             results = run_expectations_Origination(ge_df)
+#         else:
+#             ge_df = ge.from_pandas(df)
+#             results = run_expectations_Monthly(ge_df)
+#         #st.write(df) testing
+
+#         st.subheader("Great Expectations Results")
+#         st.write(results)
+
+#     else:
+#         st.warning("The uploaded file does not match either Origination or Monthly Performance Data patterns. Please select the correct file.")
+
+#     #profile = ProfileReport(df, explorative=True) #testing
+#     context = DataContext("great_expectations")
+#     profile = ProfileReport(results, explorative=True)
+#     if st.button("Generate Report: Pandas Profile"):
+        
+#         report = profile.to_file("report.html")
+#         st.success("Report generated successfully!")
+
+    
+#     if "report.html" in locals():
+#         st.download_button("Download Report", "report.html")
+
+
+
 
 # if uploaded_file is not None:
     
@@ -111,5 +324,20 @@ if uploaded_file is not None:
     # profile = ProfileReport(df, explorative=True)
     # #st.write(profile.to_widgets())
     # st.write(profile.to_html())
+
+
+#GREAT_EXPECTATIONS
+
+# datasource_name = "uploaded_file"
+
+# data_asset = context.get_datasource(datasource_name)
+
+# validator1 = context.get_validator(expectation_suite_name = datasource_name)
+
+# validator1.expect_column_values_to_match_regex(
+#     column="Credit_Score",
+#     regex=r'^(9999|[3-8]\d{2})$',  # This regex matches either 9999 or values in the range [300, 850]
+#     result_format="COMPLETE"
+# )
 
 

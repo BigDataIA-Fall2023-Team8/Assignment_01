@@ -3,6 +3,7 @@ import pandas as pd
 from pandas_profiling import ProfileReport
 import great_expectations as ge
 from great_expectations.data_context import DataContext
+import os
 
 from pandas_profiling import ProfileReport
 # from great_expectations.datasource import DatasourceConfig
@@ -19,6 +20,7 @@ st.sidebar.title("Settings")
 
 # Upload the file
 uploaded_file = st.file_uploader("Choose a file", type=["csv", "xlsx"])
+data_asset_name = os.path.splitext(uploaded_file.name)[0]
 
 import os
 def get_file_type_from_filename(filename):
@@ -95,7 +97,7 @@ if st.sidebar.button("Run Expectation"):
     batch_request = ge.core.batch.BatchRequest(
     datasource_name = "pandas_datasource",
     data_connector_name =  "default_inferred_data_connector_name",
-    data_asset_name = "data"  # e.g., if your file is "sample.csv", use "sample"
+    data_asset_name = "data_asset_name" 
     )
 
 
@@ -107,7 +109,8 @@ if st.sidebar.button("Run Expectation"):
 
     validator1.expect_column_values_to_match_regex(
             column="Credit_Score",
-            regex=r'^(9999|[3-8]\d{2})$',  # This regex matches either 9999 or values in the range [300, 850]
+            # This regex matches either 9999 or values in the range [300, 850]
+            regex=r'^(9999|[3-8]\d{2})$',  
             result_format="COMPLETE"
             )
 
